@@ -1,5 +1,10 @@
 #include "crow_all.h"
 
+#include <iostream>
+#include <string>
+
+using namespace std;
+
 int main()
 {
     crow::SimpleApp app;
