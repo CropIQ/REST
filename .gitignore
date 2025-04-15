@@ -10,4 +10,11 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
-build
+
+/build/*
+!/build/README.md
+
+/cmake/LocalConfig.cmake
+/.vscode/
+/vendor/*
+!/vendor/README.md
