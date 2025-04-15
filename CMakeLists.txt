@@ -7,8 +7,8 @@ set(VENDOR_DIR ${PROJECT_SOURCE_DIR}/vendor)
 include(cmake/LocalConfig.cmake OPTIONAL)
 #include_directories(${VENDOR_DIR}/crow)
 
-find_package(asio CONFIG REQUIRED)
-find_package(crow CONFIG REQUIRED)
+#find_package(asio CONFIG REQUIRED)
+find_package(Crow CONFIG REQUIRED)
 find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
@@ -22,7 +22,7 @@ target_include_directories(CropIQ
     ${JWT_CPP_INCLUDE_DIRS}
 )
 
-target_link_libraries(CropIQ PRIVATE asio::asio Crow::Crow)
+target_link_libraries(CropIQ PRIVATE Crow::Crow)
 
 if(WIN32)
   target_link_libraries(CropIQ PRIVATE ws2_32)

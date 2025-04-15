@@ -21,7 +21,7 @@ set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CAC
 set(CMAKE_PREFIX_PATH "$ENV{VCPKG_ROOT}/installed/x64-windows" "$ENV{VCPKG_ROOT}/installed/x86-windows" ${CMAKE_PREFIX_PATH})
 ```
 
-These paths may vary depending on your OS and architecture.
+These paths may vary depending on your OS and architecture. For example, if you are using Linux, the path would be `$ENV{VCPKG_ROOT}/installed/x64-linux`.
 
 
 ### Installing dependencies using vcpkg
