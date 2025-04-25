@@ -26,6 +26,8 @@ target_link_libraries(CropIQ PRIVATE Crow::Crow)
 
 if(WIN32)
   target_link_libraries(CropIQ PRIVATE ws2_32)
+elseif(APPLE)
+  target_link_libraries(CropIQ PRIVATE pthread)
 else()
   target_link_libraries(CropIQ PRIVATE stdc++fs pthread)
 endif()
