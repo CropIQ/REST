@@ -1,6 +1,7 @@
 #ifndef ANIMALGROUP_H
 #define ANIMALGROUP_H
 
+#include "Animal.h"
 #include <string>
 #include <unordered_map>
 
