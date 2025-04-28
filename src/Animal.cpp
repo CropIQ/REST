@@ -1,5 +1,5 @@
-#include "Animal.h"
 #include "Medicament.h"
+#include "Animal.h"
 #include <string>
 #include <ctime>
 #include <vector>
@@ -24,6 +24,17 @@ int Animal::getWeight() const { return weight; }
 
 std::time_t Animal::getBirthDate() const { return birthDate; }
 
+string Animal::getAnimalInfo() const {
+   std::stringstream ss;
+   char buffer[80];
+   struct tm* timeinfo = std::localtime(&birthDate);
+
+   strftime(buffer, sizeof(buffer), "%d/%m/%Y", timeinfo);
+
+   ss << "ID: " << animalID << ", Name: " << name << ", Birth Date: " << buffer << ", Weight: " << weight;
+   return ss.str();
+}
+
 
 void Animal::setName(const string& newName) { name = newName; }
 
@@ -42,4 +53,9 @@ string Animal::getMedicamentHistory() const {
       ss << (*it).first.getName() << (*it).second << std::endl;
    }
    return ss.str();
+}
+
+
+bool Animal::operator<(const Animal& other) const {
+   this->name < other.name;
 }

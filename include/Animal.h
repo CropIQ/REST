@@ -25,12 +25,14 @@ class Animal {
    std::time_t getBirthDate() const;
    int getWeight() const;
    std::string getMedicamentHistory() const;
+   std::string getAnimalInfo() const;
 
-   void setName(const string& newName) { name = newName; }
-   void setWeight(const int& newWeight)
-   void setBirthDate(const time_t& newBirthDate)
+   void setName(const string& newName);
+   void setWeight(const int& newWeight);
+   void setBirthDate(const time_t& newBirthDate);
    
    void recordMedicament(const Medicament& med, int amountOfMedicament);
+   bool operator<(const Animal& other) const;
 };
 
 #endif
