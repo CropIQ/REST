@@ -10,9 +10,12 @@ using std::string;
 
 int AnimalGroup::nextID = 3000; // AnimalGroup ID first digit = 3
 
-AnimalGroup::AnimalGroup (const string& groupName) : 
+AnimalGroup::AnimalGroup(const string& groupName) : 
+   groupID(nextID),
    groupName(groupName),
    animalAmount(0) {}
+
+AnimalGroup::~AnimalGroup() { animalMap.clear(); }
 
 int AnimalGroup::getGroupID() const { return groupID; }
 
@@ -23,6 +26,13 @@ string AnimalGroup::getGroupName() const { return groupName; }
 void AnimalGroup::addAnimal(Animal* newAnimal) {
    animalMap.insert({newAnimal->getAnimalID(), newAnimal});
    ++animalAmount;
+}
+
+void AnimalGroup::addAnimals(std::vector<Animal*> newAnimals) {
+   for(Animal* newAnimal : newAnimals) {
+      animalMap.insert({newAnimal->getAnimalID(), newAnimal});
+      ++animalAmount;
+   }
 }
 
 void AnimalGroup::removeAnimal(Animal* removedAnimal) {

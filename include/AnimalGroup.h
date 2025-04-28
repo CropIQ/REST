@@ -14,7 +14,9 @@ class AnimalGroup {
    std::unordered_map<int, Animal*> animalMap;
 
    public: 
-   AnimalGroup (const std::string& groupName);
+   AnimalGroup(const std::string& groupName);
+
+   ~AnimalGroup();
 
    int getGroupID() const;
 
@@ -23,6 +25,8 @@ class AnimalGroup {
    std::string getGroupName() const;
 
    void addAnimal(Animal* newAnimal);
+
+   void addAnimals(Animal* newAnimals[]);
    
    void removeAnimal(Animal* removedAnimal);
 
