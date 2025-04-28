@@ -26,7 +26,7 @@ class AnimalGroup {
 
    void addAnimal(Animal* newAnimal);
 
-   void addAnimals(Animal* newAnimals[]);
+   void addAnimals(std::vector<Animal*> newAnimals);
    
    void removeAnimal(Animal* removedAnimal);
 
