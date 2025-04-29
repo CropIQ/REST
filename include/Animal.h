@@ -6,30 +6,31 @@
 #include <ctime>
 #include <vector>
 #include <utility>
+#include "nlohmann/json.hpp"
 
 class Animal {
    private:
-   static int ID;
-   int animalID;
+   static int nextId;
+   int animalId;
    std::string name;
-   time_t birthDate; // Time (s) since 1970
    int weight; // Weight (g)
-   std::vector<std::pair<Medicament, int>> medicaments;
+   time_t birthDate; // Time (s) since 1970
+   std::pair<Medicament, int> medicaments;
 
    public:
    Animal(const std::string& name);
    ~Animal();
 
-   int getAnimalID() const;
+   int getAnimalId() const;
    std::string getName() const;
-   std::time_t getBirthDate() const;
    int getWeight() const;
-   std::string getMedicamentHistory() const;
-   std::string getAnimalInfo() const;
+   std::time_t getBirthDate() const;
+   nlohmann::json getAnimalInfo() const; // Return animal info in json format
+   nlohmann::json getMedicamentHistory() const; // Return medicament history in json format
 
-   void setName(const string& newName);
-   void setWeight(const int& newWeight);
-   void setBirthDate(const time_t& newBirthDate);
+   void setName(const string& name);
+   void setWeight(const int& weight);
+   void setBirthDate(const time_t& birthDate);
    
    void recordMedicament(const Medicament& med, int amountOfMedicament);
    bool operator<(const Animal& other) const;

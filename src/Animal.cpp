@@ -5,18 +5,20 @@
 #include <vector>
 #include <utility>
 #include <sstream>
+#include "nlohmann/json.hpp"
 
+using json = nlohmann::json;
 using std::string;
 
-int Animal::ID = 2000; // Animal ID first digit = 2
+int Animal::nextId = 2000; // Animal ID first digit = 2
 
 Animal::Animal(const string& name) : name(name) {
-   animalID = ID++;
+   animalId = nextId++;
 }
 
-Animal::~Animal() {} // TODO: create proper destructor
+Animal::~Animal() = default;
 
-int Animal::getAnimalID() const { return animalID; }
+int Animal::getAnimalId() const { return animalId; }
 
 string Animal::getName() const { return name; }
 
@@ -24,37 +26,35 @@ int Animal::getWeight() const { return weight; }
 
 std::time_t Animal::getBirthDate() const { return birthDate; }
 
-string Animal::getAnimalInfo() const {
-   std::stringstream ss;
+json Animal::getAnimalInfo() const {
+   json info;
+
+   info["id"] = animalId;
+   info["name"] = name;
+   info["weight"] = weight;
+   
    char buffer[80];
    struct tm* timeinfo = std::localtime(&birthDate);
-
    strftime(buffer, sizeof(buffer), "%d/%m/%Y", timeinfo);
+   info["birth_date"] = buffer;
 
-   ss << "ID: " << animalID << ", Name: " << name << ", Birth Date: " << buffer << ", Weight: " << weight;
-   return ss.str();
+   return info;
+}
+
+json Animal::getMedicamentHistory() const { // TODO: define method to get data from DB
+   
 }
 
 
-void Animal::setName(const string& newName) { name = newName; }
+void Animal::setName(const string& name) { this->name = name; }
 
-void Animal::setWeight(const int& newWeight) { weight = newWeight; }
+void Animal::setWeight(const int& weight) { this->weight = weight; }
 
-void Animal::setBirthDate(const time_t& newBirthDate) { birthDate = newBirthDate; }
+void Animal::setBirthDate(const time_t& birthDate) { this->birthDate = birthDate; }
 
-void Animal::recordMedicament(const Medicament& med, int amountOfMedicament) { 
-   medicaments.push_back(std::make_pair(med, amountOfMedicament));
+
+void Animal::recordMedicament(const Medicament& med, int amountOfMedicament) { // TODO: define method to send data to DB
 }
-
-
-string Animal::getMedicamentHistory() const { 
-   std::stringstream ss;   
-   for(auto it = medicaments.begin(); it < medicaments.end(); ++it) {
-      ss << (*it).first.getName() << (*it).second << std::endl;
-   }
-   return ss.str();
-}
-
 
 bool Animal::operator<(const Animal& other) const {
    this->name < other.name;
