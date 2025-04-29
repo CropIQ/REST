@@ -12,13 +12,15 @@ using std::string;
 
 int Animal::nextId = 2000; // Animal ID first digit = 2
 
-Animal::Animal(const string& name) : name(name) {
+Animal::Animal(const string& name) : name(name), groupId(0) {
    animalId = nextId++;
 }
 
 Animal::~Animal() = default;
 
 int Animal::getAnimalId() const { return animalId; }
+
+int Animal::getGroupId() const { return groupId; }
 
 string Animal::getName() const { return name; }
 
@@ -45,6 +47,8 @@ json Animal::getMedicamentHistory() const { // TODO: define method to get data f
    
 }
 
+
+void Animal::setGroupId(const int& groupId) { this->groupId = groupId; }
 
 void Animal::setName(const string& name) { this->name = name; }
 

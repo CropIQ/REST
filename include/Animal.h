@@ -12,6 +12,7 @@ class Animal {
    private:
    static int nextId;
    int animalId;
+   int groupId;
    std::string name;
    int weight; // Weight (g)
    time_t birthDate; // Time (s) since 1970
@@ -22,12 +23,14 @@ class Animal {
    ~Animal();
 
    int getAnimalId() const;
+   int getGroupId() const;
    std::string getName() const;
    int getWeight() const;
    std::time_t getBirthDate() const;
    nlohmann::json getAnimalInfo() const; // Return animal info in json format
    nlohmann::json getMedicamentHistory() const; // Return medicament history in json format
 
+   void setGroupId(const int& groupId);
    void setName(const string& name);
    void setWeight(const int& weight);
    void setBirthDate(const time_t& birthDate);
