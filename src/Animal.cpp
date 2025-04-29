@@ -12,9 +12,10 @@ using std::string;
 
 int Animal::nextId = 2000; // Animal ID first digit = 2
 
-Animal::Animal(const string& name) : name(name), groupId(0) {
-   animalId = nextId++;
-}
+Animal::Animal(const string& name) : 
+   name(name), 
+   groupId(0), 
+   animalId(nextId++) {}
 
 Animal::~Animal() = default;
 
