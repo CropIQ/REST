@@ -13,7 +13,7 @@ using std::string;
 int AnimalGroup::nextId = 3000; // AnimalGroup ID first digit = 3
 
 AnimalGroup::AnimalGroup(const string& groupName) : 
-   groupId(nextId),
+   groupId(nextId++),
    groupName(groupName),
    animalAmount(0) {}
 
