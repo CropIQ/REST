@@ -4,11 +4,12 @@
 #include "Animal.h"
 #include <string>
 #include <unordered_map>
+#include "nlohmann/json.hpp"
 
 class AnimalGroup {
    private:
-   static int nextID;
-   int groupID;
+   static int nextId;
+   int groupId;
    int animalAmount;
    std::string groupName;
    std::unordered_map<int, Animal*> animalMap;
@@ -18,21 +19,21 @@ class AnimalGroup {
 
    ~AnimalGroup();
 
-   int getGroupID() const;
+   int getGroupId() const;
 
    int getAnimalAmount() const;
 
    std::string getGroupName() const;
 
-   void addAnimal(Animal* newAnimal);
+   void addAnimal(Animal* animal);
 
-   void addAnimals(std::vector<Animal*> newAnimals);
+   void addAnimals(std::vector<Animal*> animals);
    
-   void removeAnimal(Animal* removedAnimal);
+   void removeAnimal(Animal* animal);
 
-   void mergeGroup(AnimalGroup& otherGroup); // Merges this group to otherGroup. This group becomes empty
+   void mergeGroup(AnimalGroup& otherGroup); // Merges other group to this group. Other group becomes empty
 
-   std::string generateReport() const; // Generates a list of animals from the group in alphabetical order
+   nlohmann::json generateReport() const; // Generates a list of animals from the group in alphabetical order
 };
 
 #endif

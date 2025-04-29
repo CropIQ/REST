@@ -5,64 +5,66 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include "nlohmann/json.hpp"
 
+using json = nlohmann::json;
 using std::string;
 
-int AnimalGroup::nextID = 3000; // AnimalGroup ID first digit = 3
+int AnimalGroup::nextId = 3000; // AnimalGroup ID first digit = 3
 
 AnimalGroup::AnimalGroup(const string& groupName) : 
-   groupID(nextID),
+   groupId(nextId),
    groupName(groupName),
    animalAmount(0) {}
 
 AnimalGroup::~AnimalGroup() { animalMap.clear(); }
 
-int AnimalGroup::getGroupID() const { return groupID; }
+int AnimalGroup::getGroupId() const { return groupId; }
 
 int AnimalGroup::getAnimalAmount() const { return animalAmount; }
 
 string AnimalGroup::getGroupName() const { return groupName; }
 
-void AnimalGroup::addAnimal(Animal* newAnimal) {
-   animalMap.insert({newAnimal->getAnimalID(), newAnimal});
+void AnimalGroup::addAnimal(Animal* animal) {
+   this->animalMap.insert({animal->getAnimalId(), animal});
    ++animalAmount;
 }
 
-void AnimalGroup::addAnimals(std::vector<Animal*> newAnimals) {
-   for(Animal* newAnimal : newAnimals) {
-      animalMap.insert({newAnimal->getAnimalID(), newAnimal});
-      ++animalAmount;
+void AnimalGroup::addAnimals(std::vector<Animal*> animals) {
+   for(Animal* animal : animals) {
+      this->animalMap.insert({animal->getAnimalId(), animal});
+      ++this->animalAmount;
    }
 }
 
-void AnimalGroup::removeAnimal(Animal* removedAnimal) {
-   animalMap.erase(removedAnimal->getAnimalID());
+void AnimalGroup::removeAnimal(Animal* animal) {
+   this->animalMap.erase(animal->getAnimalId());
    --animalAmount;
 }
 
 void AnimalGroup::mergeGroup(AnimalGroup& otherGroup) { 
-   for(const auto& [keyID, animal] : this->animalMap) {
-      auto result = otherGroup.animalMap.insert({keyID, animal});
-      if(result.second) ++(otherGroup.animalAmount);
+   for(const auto& [keyId, animal] : otherGroup.animalMap) {
+      auto result = this->animalMap.insert({keyId, animal});
+      if(result.second) ++(this->animalAmount);
    }
-   this->animalMap.clear();
-   this->animalAmount = 0;
+   delete &otherGroup;
 }
 
-string AnimalGroup::generateReport() const {
+json AnimalGroup::generateReport() const {
    std::vector<Animal*> animalList;
    
-   for(const auto& [keyID, animalPtr] : animalMap) {
+   for(const auto& [keyId, animalPtr] : animalMap) {
       animalList.push_back(animalPtr);
    }
    
    std::sort(animalList.begin(), animalList.end(),
       [](Animal* a, Animal* b) { *a < *b; });
    
-   std::stringstream ss;
+   json report = json::array();
    for(const Animal *animal : animalList) {
-      ss << animal->getAnimalInfo() << std::endl;
+      report.push_back(animal->getAnimalInfo());
    }
-   return ss.str();
+   
+   return report;
 }
 
