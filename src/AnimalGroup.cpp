@@ -32,12 +32,14 @@ void AnimalGroup::addAnimal(Animal* animal) {
 
 void AnimalGroup::addAnimals(std::vector<Animal*> animals) {
    for(Animal* animal : animals) {
+      animal->setGroupId(this->groupId);
       this->animalMap.insert({animal->getAnimalId(), animal});
       ++this->animalAmount;
    }
 }
 
 void AnimalGroup::removeAnimal(Animal* animal) {
+   animal->setGroupId(0);
    this->animalMap.erase(animal->getAnimalId());
    --animalAmount;
 }
@@ -45,7 +47,11 @@ void AnimalGroup::removeAnimal(Animal* animal) {
 void AnimalGroup::mergeGroup(AnimalGroup& otherGroup) { 
    for(const auto& [keyId, animal] : otherGroup.animalMap) {
       auto result = this->animalMap.insert({keyId, animal});
-      if(result.second) ++(this->animalAmount);
+      if(result.second) {
+         animal->setGroupId(this->groupId);
+         ++(this->animalAmount);
+         
+      }
    }
    delete &otherGroup;
 }
