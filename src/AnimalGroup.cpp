@@ -1,29 +1,36 @@
 #include "AnimalGroup.h"
 #include "Animal.h"
-#include <string>
 #include <unordered_map>
 #include <vector>
-#include <sstream>
 #include <algorithm>
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
 using std::string;
 
-int AnimalGroup::nextId = 3000; // AnimalGroup ID first digit = 3
+AnimalGroup::AnimalGroup(const int& Id, const string& groupName, std::vector<Animal*> animals) : 
+   groupId(Id),
+   groupName(groupName)
+{
+   addAnimals(animals);
+}
 
-AnimalGroup::AnimalGroup(const string& groupName) : 
-   groupId(nextId++),
-   groupName(groupName),
-   animalAmount(0) {}
+AnimalGroup::AnimalGroup(const nlohmann::json& json) {
+   groupId = json.at("groupId").get<int>();
+   groupName = json.at("groupName").get<string>();
+   animalAmount = json.at("animalAmount").get<int>();
+
+   if (json.contains("animals") && json["animals"].is_array()) {
+      for (const auto& animalJson : json["animals"]) {
+          Animal* animal = new Animal(animalJson);
+          animal->setGroupId(this->groupId);
+          animalMap.insert({animal->getAnimalId(), animal});
+          ++animalAmount;
+      }
+   }
+}
 
 AnimalGroup::~AnimalGroup() { animalMap.clear(); }
-
-int AnimalGroup::getGroupId() const { return groupId; }
-
-int AnimalGroup::getAnimalAmount() const { return animalAmount; }
-
-string AnimalGroup::getGroupName() const { return groupName; }
 
 void AnimalGroup::addAnimal(Animal* animal) {
    this->animalMap.insert({animal->getAnimalId(), animal});
@@ -50,7 +57,6 @@ void AnimalGroup::mergeGroup(AnimalGroup& otherGroup) {
       if(result.second) {
          animal->setGroupId(this->groupId);
          ++(this->animalAmount);
-         
       }
    }
    delete &otherGroup;
@@ -64,13 +70,17 @@ json AnimalGroup::generateReport() const {
    }
    
    std::sort(animalList.begin(), animalList.end(),
-      [](Animal* a, Animal* b) { *a < *b; });
+   [](Animal* a, Animal* b) { *a < *b; });
    
-   json report = json::array();
+   json report = json::array();  
    for(const Animal *animal : animalList) {
       report.push_back(animal->getAnimalInfo());
    }
-   
    return report;
 }
 
+int AnimalGroup::getGroupId() const { return groupId; }
+int AnimalGroup::getAnimalAmount() const { return animalAmount; }
+string AnimalGroup::getGroupName() const { return groupName; }
+
+void AnimalGroup::setGroupName(const string& groupName) { this->groupName = groupName; }
