@@ -2,64 +2,58 @@
 #include "Animal.h"
 #include <string>
 #include <ctime>
-#include <vector>
 #include <utility>
-#include <sstream>
 #include "nlohmann/json.hpp"
 
-using json = nlohmann::json;
-using std::string;
+Animal::Animal(const int& Id, const int& groupId, const std::string& name, const int& weight) : 
+   animalId(Id),
+   groupId(groupId),
+   name(name),
+   weight(weight) {}
 
-int Animal::nextId = 2000; // Animal ID first digit = 2
-
-Animal::Animal(const string& name) : 
-   name(name), 
-   groupId(0), 
-   animalId(nextId++) {}
+Animal::Animal(const nlohmann::json& json) {
+   animalId = json.at("animalId").get<int>();
+   groupId = json.at("groupId").get<int>();
+   name = json.at("animalName").get<std::string>();
+   weight = json.at("weight").get<int>();
+}
 
 Animal::~Animal() = default;
 
+void Animal::recordMedicament(const Medicament& med, int amountOfMedicament) { // TODO: define method to send data to DB
+}
+
 int Animal::getAnimalId() const { return animalId; }
-
 int Animal::getGroupId() const { return groupId; }
-
-string Animal::getName() const { return name; }
-
+std::string Animal::getName() const { return name; }
 int Animal::getWeight() const { return weight; }
+time_t Animal::getBirthDate() const { return birthDate; }
 
-std::time_t Animal::getBirthDate() const { return birthDate; }
+nlohmann::json Animal::getAnimalInfo() const {
+   nlohmann::json infoJson;
 
-json Animal::getAnimalInfo() const {
-   json info;
-
-   info["id"] = animalId;
-   info["name"] = name;
-   info["weight"] = weight;
+   infoJson["id"] = animalId;
+   infoJson["name"] = name;
+   infoJson["weight"] = weight;
    
    char buffer[80];
    struct tm* timeinfo = std::localtime(&birthDate);
    strftime(buffer, sizeof(buffer), "%d/%m/%Y", timeinfo);
-   info["birth_date"] = buffer;
+   infoJson["birth_date"] = buffer;
 
-   return info;
+   return infoJson;
 }
 
-json Animal::getMedicamentHistory() const { // TODO: define method to get data from DB
-   
+nlohmann::json Animal::getMedicamentHistory() const { // TODO: define method to get data from DB
 }
 
 
 void Animal::setGroupId(const int& groupId) { this->groupId = groupId; }
-
-void Animal::setName(const string& name) { this->name = name; }
-
+void Animal::setName(const std::string& name) { this->name = name; }
 void Animal::setWeight(const int& weight) { this->weight = weight; }
-
 void Animal::setBirthDate(const time_t& birthDate) { this->birthDate = birthDate; }
 
 
-void Animal::recordMedicament(const Medicament& med, int amountOfMedicament) { // TODO: define method to send data to DB
-}
 
 bool Animal::operator<(const Animal& other) const {
    this->name < other.name;

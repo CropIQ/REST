@@ -2,15 +2,12 @@
 #define ANIMAL_H
 
 #include "Medicament.h"
-#include <string>
-#include <ctime>
 #include <vector>
 #include <utility>
 #include "nlohmann/json.hpp"
 
 class Animal {
    private:
-   static int nextId;
    int animalId;
    int groupId;
    std::string name;
@@ -19,23 +16,25 @@ class Animal {
    std::pair<Medicament, int> medicaments;
 
    public:
-   Animal(const std::string& name);
+   Animal(const int& Id, const int& groupId, const std::string& name, const int& weight);
+   Animal(const nlohmann::json& json);
    ~Animal();
+   
+   void recordMedicament(const Medicament& med, int amountOfMedicament); // Send information about newly recorded medicament to database
 
    int getAnimalId() const;
    int getGroupId() const;
    std::string getName() const;
    int getWeight() const;
-   std::time_t getBirthDate() const;
+   time_t getBirthDate() const;
    nlohmann::json getAnimalInfo() const; // Return animal info in json format
    nlohmann::json getMedicamentHistory() const; // Return medicament history in json format
 
    void setGroupId(const int& groupId);
-   void setName(const string& name);
+   void setName(const std::string& name);
    void setWeight(const int& weight);
    void setBirthDate(const time_t& birthDate);
    
-   void recordMedicament(const Medicament& med, int amountOfMedicament);
    bool operator<(const Animal& other) const;
 };
 
