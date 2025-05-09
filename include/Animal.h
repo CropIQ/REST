@@ -4,7 +4,7 @@
 #include "Medicament.h"
 #include <vector>
 #include <utility>
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 
 class Animal {
    private:
@@ -12,8 +12,8 @@ class Animal {
    int groupId;
    std::string name;
    int weight; // Weight (g)
-   time_t birthDate; // Time (s) since 1970
-   std::pair<Medicament, int> medicaments;
+   std::string birthDateTime; // Saves datestamp in format YYYY-MM-DD HH:MM:SS.ffffff for database
+   std::vector<std::pair<Medicament, int>> medicaments;
 
    public:
    Animal(const int& Id, const int& groupId, const std::string& name, const int& weight);
@@ -26,14 +26,14 @@ class Animal {
    int getGroupId() const;
    std::string getName() const;
    int getWeight() const;
-   time_t getBirthDate() const;
+   std::string getBirthDateTime() const;
    nlohmann::json getAnimalInfo() const; // Return animal info in json format
    nlohmann::json getMedicamentHistory() const; // Return medicament history in json format
 
    void setGroupId(const int& groupId);
    void setName(const std::string& name);
    void setWeight(const int& weight);
-   void setBirthDate(const time_t& birthDate);
+   void setBirthDate(const std::string& birthDate);
    
    bool operator<(const Animal& other) const;
 };
