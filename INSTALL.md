@@ -27,9 +27,10 @@ These paths may vary depending on your OS and architecture. For example, if you 
 ### Installing dependencies using vcpkg
 Run the following command in your terminal:
 ```bash
-vcpkg install asio crow jwt-cpp
+vcpkg install asio crow jwt-cpp nlohmann-json
 ```
 
 ## Dependencies used in this project
 - Crow [Source](https://github.com/CrowCpp/Crow)
 - jwt-cpp [Source](https://github.com/Thalhammer/jwt-cpp)
+- nlohmann-json [Source](https://github.com/nlohmann/json)
