@@ -22,6 +22,6 @@ public:
     nlohmann::json toJson() const;
 
     int getId() const;
-    std::string getName const;
+    std::string getName() const;
 
 };
