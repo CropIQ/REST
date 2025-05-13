@@ -7,7 +7,7 @@
 #include <nlohmann/json.hpp>
 
 class Animal {
-   private:
+private:
    int animalId;
    int groupId;
    std::string name;
@@ -15,7 +15,7 @@ class Animal {
    std::string birthDateTime; // Saves datestamp in format YYYY-MM-DD HH:MM:SS.ffffff for database
    std::vector<std::pair<Medicament, int>> medicaments;
 
-   public:
+public:
    Animal(const int& Id, const int& groupId, const std::string& name, const int& weight);
    Animal(const nlohmann::json& json);
    ~Animal();
