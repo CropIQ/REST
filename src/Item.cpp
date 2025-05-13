@@ -1,12 +1,12 @@
 #include "Item.h"
 
 Item::Item(const int& id, const std::string& name, const int& quantity) :
-    itemID(id), 
+    id(id), 
     name(name), 
     quantity(quantity) {}
 
 Item::Item(const nlohmann::json& json) {
-    itemID = json.at("itemID").get<int>();
+    id = json.at("id").get<int>();
     name = json.at("name").get<std::string>();
     quantity = json.at("quantity").get<int>();
 }
@@ -25,13 +25,13 @@ void Item::orderItem() { //TODO when order class is created
     
 }
 
-int Item::getID() const { return itemID; }
+int Item::getId() const { return id; }
 std::string Item::getName() const { return name; }
 int Item::getQuantity() const { return quantity; }
 
 nlohmann::json Item::toJson() const {
     return {
-        {"itemID", itemID},
+        {"id", id},
         {"name", name},
         {"quantity", quantity}
     };

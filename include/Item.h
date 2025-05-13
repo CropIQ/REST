@@ -5,7 +5,7 @@
 
 class Item {
 private:
-    int itemID;
+    int id;
     std::string name;
     int quantity;
 
@@ -19,7 +19,7 @@ public:
     void orderItem();
     nlohmann::json toJson() const;
 
-    int getID() const;
+    int getId() const;
     std::string getName() const;
     int getQuantity() const;
 
