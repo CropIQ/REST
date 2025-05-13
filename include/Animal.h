@@ -7,27 +7,27 @@
 #include "nlohmann/json.hpp"
 
 class Animal {
-   private:
-   int animalId;
+private:
+   int id;
    int groupId;
    std::string name;
    int weight; // Weight (g)
    time_t birthDate; // Time (s) since 1970
    std::pair<Medicament, int> medicaments;
 
-   public:
+public:
    Animal(const int& Id, const int& groupId, const std::string& name, const int& weight);
    Animal(const nlohmann::json& json);
    ~Animal();
    
    void recordMedicament(const Medicament& med, int amountOfMedicament); // Send information about newly recorded medicament to database
 
-   int getAnimalId() const;
+   int getId() const;
    int getGroupId() const;
    std::string getName() const;
    int getWeight() const;
    time_t getBirthDate() const;
-   nlohmann::json getAnimalInfo() const; // Return animal info in json format
+   nlohmann::json toJson() const; // Return animal info in json format
    nlohmann::json getMedicamentHistory() const; // Return medicament history in json format
 
    void setGroupId(const int& groupId);
