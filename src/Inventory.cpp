@@ -1,11 +1,11 @@
 #include "Inventory.h"
 
 Inventory::Inventory(const int& id,const std::string& name) :
-    inventoryId(id),
+    id(id),
     name(name) {}
 
 Inventory::Inventory(const nlohmann::json& json) {
-    inventoryId = json.at("inventoryId").get<int>();
+    id = json.at("id").get<int>();
     name = json.at("name").get<std::string>();
 }
 
@@ -36,12 +36,12 @@ void Inventory::removeItem(const Item& item, int quantity) {
 }
 
 std::vector<Item> Inventory::viewInventory() const { return items; }
-int Inventory::getId() const { return inventoryId; }
+int Inventory::getId() const { return id; }
 std::string Inventory::getName() const { return name; }
 
 nlohmann::json Item::toJson() const {
     nlohmann::json jsonData;
-    jsonData["inventoryId"] = inventoryId;
+    jsonData["id"] = id;
     jsonData["name"] = name;
 
     // If Inventory contains a vector of Items

@@ -7,7 +7,7 @@
 
 class Inventory {
 private:
-    int inventoryId;
+    int id;
     std::vector<Item> items;
     std::string name;
 
