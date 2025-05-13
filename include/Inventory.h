@@ -1,0 +1,27 @@
+#pragma once
+
+#include <string>
+#include <vector>
+#include "Item.h"
+#include <nlohmann/json.hpp>
+
+class Inventory {
+private:
+    int inventoryId;
+    std::vector<Item> items;
+    std::string name;
+
+public:
+    Inventory(const int& id, const std::string& name);
+    Inventory(const nlohmann::json& json);
+    ~Inventory();
+
+    void addItem(const Item& item, int quantity);
+    void removeItem(const Item& item, int quantity);
+    std::vector<Item> viewInventory() const;
+    nlohmann::json toJson() const;
+
+    int getId() const;
+    std::string getName const;
+
+};
