@@ -1,11 +1,9 @@
 #include "Inventory.h"
 
-Inventory::Inventory(const int& id,const std::string& name) :
-    id(id),
+Inventory::Inventory(const std::string& name) :
     name(name) {}
 
 Inventory::Inventory(const nlohmann::json& json) {
-    id = json.at("id").get<int>();
     name = json.at("name").get<std::string>();
 }
 
