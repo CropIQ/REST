@@ -9,9 +9,9 @@ Order::Order(const nlohmann::json& json) {
 
 Order::~Order() = default;
 
-lohmann::json Order::toJson() const {
+nlohmann::json Order::toJson() const {
     nlohmann::json jsonData;
-    jsonData["id"] = orderId;
+    jsonData["id"] = id;
     jsonData["orderDate"] = orderDate;
     jsonData["itemId"] = itemId;
     jsonData["quantity"] = quantity;
