@@ -33,7 +33,6 @@ void Inventory::removeItem(const Item& item, int quantity) {
     }
 }
 
-std::vector<Item> Inventory::viewInventory() const { return items; }
 int Inventory::getId() const { return id; }
 std::string Inventory::getName() const { return name; }
 
