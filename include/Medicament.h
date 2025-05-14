@@ -1,5 +1,4 @@
-#ifndef MEDICAMENT_H
-#define MEDICAMENT_H
+#pragma once
 #include <nlohmann/json.hpp>
 
 class Medicament {
@@ -17,4 +16,3 @@ public:
     std::string getDescription() const;
     time_t getInjectionDate() const;
 };
-#endif // MEDICAMENT_H
