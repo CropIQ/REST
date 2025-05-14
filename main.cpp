@@ -3,11 +3,16 @@
 #include <iostream>
 #include <string>
 
+#include "dotenv/dotenvFind.h"
+
 using namespace std;
 
 int main()
 {
     crow::SimpleApp app;
+
+    dotenvFind::init();
+    // Use std::getenv("DATABASE_HOST") to get the environment variable
 
     //define your endpoint at the root directory
     CROW_ROUTE(app, "/")([](){

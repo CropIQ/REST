@@ -12,6 +12,8 @@ _deps
 CMakeUserPresets.json
 .DS_Store
 
+/.env
+
 /build/*
 !/build/README.md
 
@@ -19,3 +21,6 @@ CMakeUserPresets.json
 /.vscode/
 /vendor/*
 !/vendor/README.md
+
+# Exclude dependencies which are not installable
+!/vendor/dotenv

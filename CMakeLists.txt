@@ -21,6 +21,7 @@ target_include_directories(CropIQ
     ${PROJECT_SOURCE_DIR}/include
     ${VENDOR_DIR}
     ${JWT_CPP_INCLUDE_DIRS}
+    ${VENDOR_DIR}/dotenv
 )
 
 target_link_libraries(CropIQ PRIVATE Crow::Crow)
