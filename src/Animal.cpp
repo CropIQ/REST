@@ -44,9 +44,9 @@ nlohmann::json Animal::getMedicamentHistory() const { // TODO: define method to 
    nlohmann::json medicamentHistoryJson;
    for (const auto& medicament : medicaments) {
        medicamentHistoryJson.push_back({
-           {"medicamentId", medicament.first.getId()},
-           {"name", medicament.first.getName()},
-           {"amount", medicament.second}
+           {"medicamentId", medicament.first.first},
+           {"amount", medicament.first.second},
+           {"injectionDate", medicament.second}
        });
    }
    return medicamentHistoryJson;

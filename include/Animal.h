@@ -12,7 +12,7 @@ private:
    std::string name;
    int weight; // Weight (g)
    std::string birthDateTime; // Saves datestamp in format YYYY-MM-DD HH:MM:SS.ffffff for database
-   std::vector<std::pair<Medicament, int>> medicaments;
+   std::vector<std::pair<std::pair<int, int>, std::string>> medicaments; //storing medicament as {{medicamentId, amount}, date}, date as string
 
 public:
    Animal(const int& Id, const int& groupId, const std::string& name, const int& weight);
