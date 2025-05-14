@@ -36,7 +36,7 @@ void Inventory::removeItem(const Item& item, int quantity) {
 int Inventory::getId() const { return id; }
 std::string Inventory::getName() const { return name; }
 
-nlohmann::json Item::toJson() const {
+nlohmann::json Inventory::toJson() const {
     nlohmann::json jsonData;
     jsonData["id"] = id;
     jsonData["name"] = name;
