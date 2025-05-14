@@ -10,11 +10,10 @@ Order::Order(const nlohmann::json& json) {
 Order::~Order() = default;
 
 nlohmann::json Order::toJson() const {
-    nlohmann::json jsonData;
-    jsonData["id"] = id;
-    jsonData["orderDate"] = orderDate;
-    jsonData["itemId"] = itemId;
-    jsonData["quantity"] = quantity;
-
-    return jsonData;
+    return {
+        {"id", id},
+        {"orderDate", orderDate},
+        {"itemId", itemId},
+        {"quantity", quantity}
+    };
 }
