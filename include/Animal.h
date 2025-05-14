@@ -1,5 +1,4 @@
-#ifndef ANIMAL_H
-#define ANIMAL_H
+#pragma once
 
 #include "Medicament.h"
 #include <vector>
