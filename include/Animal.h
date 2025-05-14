@@ -26,7 +26,7 @@ public:
    std::string getName() const;
    int getWeight() const;
    std::string getBirthDateTime() const;
-   nlohmann::json getAnimalInfo() const; // Return animal info in json format
+   nlohmann::json toJson() const; // Return animal info in json format
    nlohmann::json getMedicamentHistory() const; // Return medicament history in json format
 
    void setGroupId(const int& groupId);

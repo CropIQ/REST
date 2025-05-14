@@ -29,7 +29,7 @@ std::string Animal::getName() const { return name; }
 int Animal::getWeight() const { return weight; }
 std::string Animal::getBirthDateTime() const { return birthDateTime; }
 
-nlohmann::json Animal::getAnimalInfo() const {
+nlohmann::json Animal::toJson() const {
    nlohmann::json infoJson;
 
    infoJson["id"] = animalId;
