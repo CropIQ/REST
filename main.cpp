@@ -3,9 +3,10 @@
 #include <iostream>
 #include <string>
 
-#include "dotenv/dotenvFind.h"
+#include <dotenv/dotenvFind.h>
 #include "jwt-cpp/jwt.h"
 
+#include "include/Encryption.h"
 #include "include/middleware/JWTMiddleware.h"
 #include "routes/authRoutes.cpp"
 

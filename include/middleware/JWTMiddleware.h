@@ -2,6 +2,8 @@
 
 #include <crow.h>
 #include <jwt-cpp/jwt.h>
+#include <dotenv/dotenvFind.h>
+
 #include <chrono>
 #include <string>
 #include <vector>
