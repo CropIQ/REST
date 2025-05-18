@@ -2,6 +2,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <nlohmann/json.hpp>
 
 #define NOT_STARTED 0
 #define IN_PROGRESS 1
@@ -23,6 +24,7 @@ private:
 
 public:
    Task(const std::string& name, const int& status, const time_t& dueDate, const int& priority);
+   Task(const nlohmann::json& json);
 
    void setName(const std::string& name);
    void setStatus(const int& status);
@@ -36,4 +38,6 @@ public:
    time_t getDueDate() const;
    int getPriority() const;
    int getAssignedWorkerId() const;
+
+   nlohmann::json toJson() const;
 };
