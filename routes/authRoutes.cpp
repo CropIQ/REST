@@ -61,7 +61,10 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
 
         //DB check
         Database db;
-        if (!db.connect()) return crow::response(500, "Unexpected error");
+        if (!db.connect()) {
+            crow::json::wvalue res; res["error"] = "Unexpected error";
+            return crow::response(500, res);
+        }
         auto conn = db.getConn();
 
         //Use prepared statements to prevent SQL injection
@@ -157,7 +160,10 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
         if (errorsCount == 0) {
             hashedPassword = hmac_sha256(std::getenv("PASSWORD_HASH_KEY"), password);
             //DB check
-            if (!db.connect()) return crow::response(500, "Unexpected error");
+            if (!db.connect()) {
+                crow::json::wvalue res; res["error"] = "Unexpected error";
+                return crow::response(500, res);
+            }
             auto conn = db.getConn();
             auto stmnt = conn->prepareStatement("SELECT id FROM users WHERE email = ? LIMIT 1");
             stmnt->setString(1, email);
@@ -240,7 +246,10 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
 
             // Generate a new access token
             Database db;
-            if (!db.connect()) return crow::response(500, "Unexpected error");
+            if (!db.connect()) {
+                crow::json::wvalue res; res["error"] = "Unexpected error";
+                return crow::response(500, res);
+            }
             auto conn = db.getConn();
             string accessToken = generateAccessToken(userid, conn);
             if (accessToken.empty()) {
