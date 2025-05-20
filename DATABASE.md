@@ -10,5 +10,5 @@
 - Write `mariadb -u {user} -p`
 - Enter your password
 - Create a `cropiq` database `CREATE DATABASE cropiq;`
-- `USE DATABASE cropiq;`
+- `USE cropiq;`
 - `SOURCE ./cropiq.sql`
