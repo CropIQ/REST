@@ -9,6 +9,7 @@
 #include <dotenv/dotenvFind.h>
 
 #include "../include/Encryption.h"
+#include "../include/Database.h"
 #include "../include/middleware/JWTMiddleware.h"
 
 using namespace std;
@@ -20,16 +21,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/worker/assignedTasks")
     .methods("GET"_method)
-    ([](const crow::request &req) {
+    ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
-
-        /* auto body = crow::json::load(req.body);
-        if (!body) {
-            res["error"] = "Invalid JSON"; return crow::response(400, res);
-        } */
+        res["success"] = false;
 
         string userId = ctx.getUserId();
 
@@ -68,11 +65,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/worker/assignedTasks/<int>")
     .methods("GET"_method)
-    ([](const crow::request &req, int taskId) {
+    ([&app](const crow::request &req, int taskId) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
+        res["success"] = false;
         string userId = ctx.getUserId();
 
         Database db;
@@ -100,7 +98,7 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
         task["farmId"] = result->getInt("farmId");
         task["farmName"] = result->getString("farmName");
 
-        res["task"] = task;
+        res["task"] = std::move(task);
         res["success"] = true;
         return crow::response(200, res);
     });
@@ -110,11 +108,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/worker/assignedTasks/<int>/status/<str>")
     .methods("PUT"_method)
-    ([](const crow::request &req, int taskId, string status) {
+    ([&app](const crow::request &req, int taskId, string status) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
+        res["success"] = false;
         string userId = ctx.getUserId();
 
         Database db;
@@ -132,9 +131,9 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
         stmnt->setString(1, status);
         stmnt->setInt(2, taskId);
         stmnt->setInt(3, stoi(userId));
-        auto result = stmnt->executeQuery();
+        int updateCount = stmnt->executeUpdate();
 
-        if (result->getUpdateCount() == 0) {
+        if (updateCount == 0) {
             res["error"] = "Task not found"; return crow::response(404, res);
         }
 
@@ -148,11 +147,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/farmer/tasks")
     .methods("POST"_method)
-    ([](const crow::request &req) {
+    ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
 
         crow::json::wvalue res;
+        res["success"] = false;
 
         auto body = crow::json::load(req.body);
         if (!body) {
@@ -183,16 +183,16 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
         }
 
         auto stmnt = conn->prepareStatement("INSERT INTO tasks (name, assignedWorkerId, status, dueDate, priority, description, farmId) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        stmnt->setString(1, body["name"].s());
+        stmnt->setString(1, string(body["name"].s()));
         stmnt->setInt(2, body["assignedWorkerId"].i());
         stmnt->setString(3, "planned");
-        stmnt->setString(4, body["dueDate"].s());
-        stmnt->setString(5, body["priority"].s());
-        stmnt->setString(6, body["description"].s());
+        stmnt->setString(4, string(body["dueDate"].s()));
+        stmnt->setString(5, string(body["priority"].s()));
+        stmnt->setString(6, string(body["description"].s()));
         stmnt->setInt(7, body["farmId"].i());
-        auto result = stmnt->executeQuery();
+        int insertCount = stmnt->executeUpdate();
 
-        if (result->getUpdateCount() == 0) {
+        if (insertCount == 0) {
             res["error"] = "Task not created"; return crow::response(500, res);
         }
 
@@ -205,11 +205,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/farmer/farms")
     .methods("GET"_method)
-    ([](const crow::request &req) {
+    ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
 
         crow::json::wvalue res;
+        res["success"] = false;
 
         Database db;
         if (!db.connect()) {
@@ -242,11 +243,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/farmer/farms/<int>")
     .methods("GET"_method)
-    ([](const crow::request &req, int farmId) {
+    ([&app](const crow::request &req, int farmId) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
 
         crow::json::wvalue res;
+        res["success"] = false;
 
         Database db;
         if (!db.connect()) {
@@ -270,7 +272,7 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
         farm["name"] = result->getString("name");
         farm["usersCount"] = result->getInt("usersCount");
 
-        res["farm"] = farm;
+        res["farm"] = std::move(farm);
         res["success"] = true;
         return crow::response(200, res);
     });
@@ -280,11 +282,12 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
      */
     CROW_ROUTE(app, "/farmer/farms")
     .methods("POST"_method)
-    ([](const crow::request &req) {
+    ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
         if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
 
         crow::json::wvalue res;
+        res["success"] = false;
 
         auto body = crow::json::load(req.body);
         if (!body) {
@@ -305,14 +308,20 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
 
         auto conn = db.getConn();
         auto stmnt = conn->prepareStatement("INSERT INTO farms (name) VALUES (?)");
-        stmnt->setString(1, body["name"].s());
-        auto result = stmnt->executeQuery();
+        stmnt->setString(1, string(body["name"].s()));
+        int insertCount = stmnt->executeUpdate();
 
-        if (result->getUpdateCount() == 0) {
+        if (insertCount == 0) {
             res["error"] = "Farm not created"; return crow::response(500, res);
         }
 
-        int farmId = result->getGeneratedKeys().getInt(1);
+        auto generatedKeys = stmnt->getGeneratedKeys();
+        int farmId = 0;
+        if (generatedKeys->next()) {
+            farmId = generatedKeys->getInt(1);
+        } else {
+            res["error"] = "Failed to retrieve farm ID"; return crow::response(500, res);
+        }
 
         // Link the farm to the user
         auto stmnt2 = conn->prepareStatement("INSERT INTO linkedfarms (userId, farmId) VALUES (?, ?)");
