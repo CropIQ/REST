@@ -23,6 +23,16 @@ map<string, string> JWTMiddleware::context::getUserData() const {
     return map<string, string>();
 }
 
+string JWTMiddleware::context::getUserId() const {
+    if (isAuthenticated) {
+        auto it = userData_.find("userid");
+        if (it != userData_.end()) {
+            return it->second;
+        }
+    }
+    return "0";
+}
+
 
 
 void JWTMiddleware::after_handle(crow::request& req, crow::response& res, context& ctx){}

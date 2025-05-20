@@ -17,6 +17,7 @@ struct JWTMiddleware {
         map<string, string> userData_;
         unique_ptr<crow::response> hasAnyRole(const vector<string>& requiredRoles);
         string getUserRole() const;
+        string getUserId() const;
         map<string, string> getUserData() const;
     };
 
