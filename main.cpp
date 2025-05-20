@@ -2,23 +2,47 @@
 
 #include <iostream>
 #include <string>
+
 #include <dotenv/dotenvFind.h>
+#include "jwt-cpp/jwt.h"
+
+#include "include/Encryption.h"
 #include "include/Database.h"
+#include "include/middleware/JWTMiddleware.h"
+#include "routes/authRoutes.cpp"
 
 using namespace std;
 
 int main()
 {
-    crow::SimpleApp app;
+    crow::App<JWTMiddleware> app;
 
     dotenvFind::init();
     // Use std::getenv("DATABASE_HOST") to get the environment variable
+
+    register_authRoutes(app);
 
     //define your endpoint at the root directory
     CROW_ROUTE(app, "/")([](){
         return "Hello world";
     });
 
+    CROW_ROUTE(app, "/simpleAuth")
+    .methods("GET"_method)
+    ([&app](const crow::request& req){
+        auto &ctx = app.get_context<JWTMiddleware>(req);
+        if (auto error = ctx.hasAnyRole({"admin", "user"})) return std::move(*error);
+
+        crow::json::wvalue x;
+        x["message"] = "Hello " + ctx.getUserRole();
+
+        for (const auto& kv : ctx.getUserData()) {
+            x[kv.first] = kv.second;
+        }
+
+        return crow::response{200, x};
+    });
+    
     CROW_ROUTE(app, "/sampleDB")([](){
         Database db;
         if (!db.connect()) return crow::response(500, "Unexpected error");
