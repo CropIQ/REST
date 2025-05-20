@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable: 4996)
 
 #include "dotenv.h"
 #include <filesystem>
@@ -8,17 +9,20 @@ namespace fs = std::filesystem;
 
 class dotenvFind : public dotenv {
 public:
-  static void init() {
-      fs::path current = fs::current_path();
-      std::cout << current << std::endl;
+  dotenvFind() = delete;
+  ~dotenvFind() = delete;
 
-      while (!fs::exists(current / ".env")) {
-        if (current.has_parent_path()) {
-          current = current.parent_path();
-        } else {
-          std::cerr << "[dotenv::initFind] Could not find .env\n";
-          return;
-        }
+  static void init() {
+    fs::path current = fs::current_path();
+
+    while (!fs::exists(current / ".env")) {
+      fs::path parent = current.parent_path();
+      if (parent == current) {
+        std::cout << "[dotenv::initFind] Could not find .env\n";
+        exit(1);
+      }
+
+      current = parent;
     }
 
     std::string found_path = (current / ".env").string();
