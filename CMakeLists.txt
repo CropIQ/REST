@@ -29,6 +29,9 @@ target_link_libraries(CropIQ PRIVATE Crow::Crow)
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(CropIQ PRIVATE nlohmann_json::nlohmann_json)
 
+find_package(unofficial-mariadb-connector-cpp CONFIG REQUIRED)
+target_link_libraries(CropIQ PRIVATE unofficial::mariadb-connector-cpp::mariadbcpp)
+
 if(WIN32)
   target_link_libraries(CropIQ PRIVATE ws2_32)
 elseif(APPLE)
