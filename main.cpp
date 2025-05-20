@@ -10,6 +10,7 @@
 #include "include/Database.h"
 #include "include/middleware/JWTMiddleware.h"
 #include "routes/authRoutes.cpp"
+#include "routes/workerRoutes.cpp"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ int main()
     // Use std::getenv("DATABASE_HOST") to get the environment variable
 
     register_authRoutes(app);
+    register_workerRoutes(app);
 
     //define your endpoint at the root directory
     CROW_ROUTE(app, "/")([](){
