@@ -25,9 +25,9 @@ static string generateAccessToken(const string &userid, shared_ptr<sql::Connecti
     }
 
 
-    string userrole = result->getString("role");
-    string email = result->getString("email");
-    string name = result->getString("name");
+    string userrole = result->getString("role").c_str();
+    string email = result->getString("email").c_str();
+    string name = result->getString("name").c_str();
 
     auto now = chrono::system_clock::now();
     auto accessToken = jwt::create()
@@ -72,7 +72,7 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
         if (result->next()) {
             auto now = chrono::system_clock::now();
 
-            string userid = result->getString("id");
+            string userid = result->getString("id").c_str();
             string accessToken = generateAccessToken(userid, conn);
 
             if (accessToken.empty()) {
@@ -186,7 +186,7 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
             if (!result->next()) {
                 errors.push_back("Failed to get user ID"); errorsCount++;
             } else {
-                userid = result->getString(1);
+                userid = result->getString(1).c_str();
             }       
         }
 
