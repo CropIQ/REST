@@ -57,9 +57,9 @@ void JWTMiddleware::before_handle(crow::request& req, crow::response& res, conte
         ctx.userRole_ = decoded.get_payload_claim("role").as_string();
 
         // Extract user data from the token and store in map<string, string> userData_;
-        auto claims = decoded.get_payload_claims();
+        auto claims = decoded.get_payload_json();
         for (const auto& kv : claims) {
-            ctx.userData_[kv.first] = kv.second.as_string();
+            ctx.userData_[kv.first] = kv.second.to_str();
         }
 
     } catch (...) {

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 4.0)
 project(CropIQ)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,8 @@ target_include_directories(CropIQ
 
 target_link_libraries(CropIQ PRIVATE Crow::Crow)
 
-find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
+find_package(jwt-cpp CONFIG REQUIRED)
+target_link_libraries(CropIQ PRIVATE jwt-cpp::jwt-cpp)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(CropIQ PRIVATE nlohmann_json::nlohmann_json)
