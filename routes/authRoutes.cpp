@@ -9,15 +9,25 @@
 #include <dotenv/dotenvFind.h>
 
 #include "../include/Encryption.h"
+#include "../include/Database.h"
 #include "../include/middleware/JWTMiddleware.h"
 
 using namespace std;
 
-static string generateAccessToken(const string &userid) {
+static string generateAccessToken(const string &userid, shared_ptr<sql::Connection> &conn) {
     // Search for user in DB and get user role
 
-    string userrole = "admin"; // Replace with actual user role
-    string email = "mail@mail.com"; // Replace with actual email
+    auto stmnt = conn->prepareStatement("SELECT role, name, email FROM users WHERE id = ? LIMIT 1");
+    stmnt->setString(1, userid);
+    auto result = stmnt->executeQuery();
+    if (!result->next()) {
+        return "";
+    }
+
+
+    string userrole = result->getString("role");
+    string email = result->getString("email");
+    string name = result->getString("name");
 
     auto now = chrono::system_clock::now();
     auto accessToken = jwt::create()
@@ -26,6 +36,7 @@ static string generateAccessToken(const string &userid) {
         .set_payload_claim("userid", jwt::claim(userid))
         .set_payload_claim("email", jwt::claim(email))
         .set_payload_claim("role", jwt::claim(userrole))
+        .set_payload_claim("name", jwt::claim(name))
         .set_expires_at(now + chrono::minutes(15))
         .sign(jwt::algorithm::hs256{std::getenv("JWT_SECRET_KEY")});
 
@@ -46,14 +57,23 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
 
         string email = body["email"].s();
         string password = body["password"].s();
+        string hashedPassword = hmac_sha256(std::getenv("PASSWORD_HASH_KEY"), password);
 
-        // Dummy check
-        if (email == "admin" && password == "password") {
+        //DB check
+        Database db;
+        if (!db.connect()) return crow::response(500, "Unexpected error");
+        auto conn = db.getConn();
+
+        //Use prepared statements to prevent SQL injection
+        auto stmnt = conn->prepareStatement("SELECT id FROM users WHERE email = ? AND password = ? LIMIT 1");
+        stmnt->setString(1, email);
+        stmnt->setString(2, hashedPassword);
+        auto result = stmnt->executeQuery();
+        if (result->next()) {
             auto now = chrono::system_clock::now();
 
-            string userid = "ID"; // Replace with actual user ID
-
-            string accessToken = generateAccessToken(userid);
+            string userid = result->getString("id");
+            string accessToken = generateAccessToken(userid, conn);
 
             if (accessToken.empty()) {
                 // Return error response as json
@@ -87,12 +107,14 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
             return crow::response(400, res);
         }
 
-        vector<string> availableRoles = {"admin", "user", "guest"};
+        vector<string> availableRoles = {"worker"};
 
         string name = body["name"].s();
         string role = body["role"].s();
         string email = body["email"].s();
         string password = body["password"].s();
+        string hashedPassword;
+        Database db;
 
         int errorsCount = 0;
         vector<string> errors;
@@ -133,11 +155,44 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
         }
 
         if (errorsCount == 0) {
-            string hashedPassword = hmac_sha256(std::getenv("PASSWORD_HASH_KEY"), password);
+            hashedPassword = hmac_sha256(std::getenv("PASSWORD_HASH_KEY"), password);
+            //DB check
+            if (!db.connect()) return crow::response(500, "Unexpected error");
+            auto conn = db.getConn();
+            auto stmnt = conn->prepareStatement("SELECT id FROM users WHERE email = ? LIMIT 1");
+            stmnt->setString(1, email);
+            auto result = stmnt->executeQuery();
+            if (result->next()) {
+                errors.push_back("Email already exists"); errorsCount++;
+            }
+        }
 
-            // TODO: Save user to DB
-            string userid = "ID"; // Replace with actual user ID
-            string accessToken = generateAccessToken(userid);
+        string userid;
+
+        if (errorsCount == 0) {
+            //DB insert
+            auto conn = db.getConn();
+            auto stmnt = conn->prepareStatement("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+            stmnt->setString(1, name);
+            stmnt->setString(2, email);
+            stmnt->setString(3, hashedPassword);
+            stmnt->setString(4, role);
+            stmnt->executeQuery();
+            
+            // SELECT LAST_INSERT_ID()
+            auto stmt = conn->createStatement();
+            auto result = stmt->executeQuery("SELECT LAST_INSERT_ID()");
+
+            if (!result->next()) {
+                errors.push_back("Failed to get user ID"); errorsCount++;
+            } else {
+                userid = result->getString(1);
+            }       
+        }
+
+        if (errorsCount == 0) {
+            auto conn = db.getConn();
+            string accessToken = generateAccessToken(userid, conn);
             string refreshToken = jwt::create()
                 .set_type("JWS")
                 .set_issuer("CropIQ-RT")
@@ -184,7 +239,10 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
             string userid = decoded.get_payload_claim("userid").as_string();
 
             // Generate a new access token
-            string accessToken = generateAccessToken(userid);
+            Database db;
+            if (!db.connect()) return crow::response(500, "Unexpected error");
+            auto conn = db.getConn();
+            string accessToken = generateAccessToken(userid, conn);
             if (accessToken.empty()) {
                 crow::json::wvalue res; res["error"] = "Failed to generate access token";
                 return crow::response(500, res);

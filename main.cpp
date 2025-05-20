@@ -7,6 +7,7 @@
 #include "jwt-cpp/jwt.h"
 
 #include "include/Encryption.h"
+#include "include/Database.h"
 #include "include/middleware/JWTMiddleware.h"
 #include "routes/authRoutes.cpp"
 
