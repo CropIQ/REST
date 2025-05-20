@@ -42,6 +42,27 @@ int main()
 
         return crow::response{200, x};
     });
+    
+    CROW_ROUTE(app, "/sampleDB")([](){
+        Database db;
+        if (!db.connect()) return crow::response(500, "Unexpected error");
+        auto conn = db.getConn();
+        
+        auto stmt = db.createStatement();
+        auto res = stmt->executeQuery("SELECT * FROM users");
+
+        crow::json::wvalue users;
+        vector<crow::json::wvalue> usersList;
+
+        while (res->next()) {
+            int id = res->getInt("id");
+            string name = res->getString("name").c_str();
+            usersList.push_back({{"id", id}, {"name", name}});
+        }
+
+        users["users"] = move(usersList);
+        return crow::response{200, users};
+    });
 
     CROW_ROUTE(app, "/authentication/sayHello/<string>")
     .methods("GET"_method)

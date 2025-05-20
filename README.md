@@ -1,5 +1,7 @@
 # CropIQ REST API
-Read `INSTALL.md` for installation instructions.
+Read [`INSTALL.md`](./INSTALL.md) for installation instructions.
+
+Read [`DATABASE.md`](./DATABASE.md) to setup a MariaDB database.
 
 ## Usage
 
