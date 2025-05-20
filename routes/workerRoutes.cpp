@@ -54,7 +54,7 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
             tasks.push_back(task);
         }
 
-        res["tasks"] = tasks;
+        res["tasks"] = std::move(tasks);
         res["success"] = true;
 
         return crow::response(200, res);
@@ -182,15 +182,15 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
             res["error"] = "Invalid assigned worker"; return crow::response(400, res);
         }
 
-        auto stmnt = conn->prepareStatement("INSERT INTO tasks (name, assignedWorkerId, status, dueDate, priority, description, farmId) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        stmnt->setString(1, string(body["name"].s()));
-        stmnt->setInt(2, body["assignedWorkerId"].i());
-        stmnt->setString(3, "planned");
-        stmnt->setString(4, string(body["dueDate"].s()));
-        stmnt->setString(5, string(body["priority"].s()));
-        stmnt->setString(6, string(body["description"].s()));
-        stmnt->setInt(7, body["farmId"].i());
-        int insertCount = stmnt->executeUpdate();
+        auto stmnt2 = conn->prepareStatement("INSERT INTO tasks (name, assignedWorkerId, status, dueDate, priority, description, farmId) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        stmnt2->setString(1, string(body["name"].s()));
+        stmnt2->setInt(2, body["assignedWorkerId"].i());
+        stmnt2->setString(3, "planned");
+        stmnt2->setString(4, string(body["dueDate"].s()));
+        stmnt2->setString(5, string(body["priority"].s()));
+        stmnt2->setString(6, string(body["description"].s()));
+        stmnt2->setInt(7, body["farmId"].i());
+        int insertCount = stmnt2->executeUpdate();
 
         if (insertCount == 0) {
             res["error"] = "Task not created"; return crow::response(500, res);
@@ -233,7 +233,7 @@ inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
 
             farms.push_back(farm);
         }
-        res["farms"] = farms;
+        res["farms"] = std::move(farms);
         res["success"] = true;
         return crow::response(200, res);
     });
