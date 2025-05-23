@@ -78,7 +78,7 @@ inline void register_farmRoutes(crow::App<JWTMiddleware> &app) {
    });
 
    // Update farm name
-   CROW_ROUTE(app, "/farm")
+   CROW_ROUTE(app, "/farm/<int>")
    .methods("PUT"_method)
    ([&](const crow::request& req, int id) {
       auto body = crow::json::load(req.body);
@@ -114,6 +114,30 @@ inline void register_farmRoutes(crow::App<JWTMiddleware> &app) {
          crow::json::wvalue res;
          res["error"] = "SQL error: " + std::string(e.what());
          return crow::response(500, res);
+      }
+   });
+
+   CROW_ROUTE(app, "/farm/<int>")
+   .methods("DELETE"_method)
+   ([&](int id) {
+      Database db;
+      if (!db.connect()) {
+         crow::json::wvalue res; res["error"] = "Database connection failed";
+         return crow::response(500, res);
+      }
+
+      auto conn = db.getConn();
+      auto stmnt = conn->prepareStatement("DELETE FROM farms WHERE id = ?");
+      stmnt->setInt(1, id);
+      int affectedRows = stmnt->executeUpdate();
+
+      crow::json::wvalue res;
+      if (affectedRows > 0) {
+         res["message"] = "Farm deleted";
+         return crow::response(200, res);
+      } else {
+         res["error"] = "Farm not found";
+         return crow::response(404, res);
       }
    });
 
