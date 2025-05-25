@@ -1,4 +1,5 @@
 #include <crow.h>
+#include <crow/middlewares/cors.h>
 
 #include <iostream>
 #include <string>
@@ -15,9 +16,15 @@ using namespace std;
 
 int main()
 {
-    crow::App<JWTMiddleware> app;
-
+    crow::App<crow::CORSHandler, JWTMiddleware> app;
     dotenvFind::init();
+    
+    app.get_middleware<crow::CORSHandler>().global()
+        .origin("http://localhost:3000")
+        .methods("GET"_method, "POST"_method, "PUT"_method, "DELETE"_method, "OPTIONS"_method)
+        .headers("Content-Type, Authorization")
+        .allow_credentials();
+
     // Use std::getenv("DATABASE_HOST") to get the environment variable
 
     register_authRoutes(app);
@@ -26,7 +33,7 @@ int main()
     CROW_ROUTE(app, "/")([](){
         return "Hello world";
     });
-
+    
     CROW_ROUTE(app, "/simpleAuth")
     .methods("GET"_method)
     ([&app](const crow::request& req){
