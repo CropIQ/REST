@@ -32,6 +32,7 @@ int main()
     register_authRoutes(app);
     register_farmRoutes(app);
     register_workerRoutes(app);
+    register_farmRoutes(app);
 
     //define your endpoint at the root directory
     CROW_ROUTE(app, "/")([](){
