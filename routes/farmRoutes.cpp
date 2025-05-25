@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 
+#include <crow/middlewares/cors.h>
 #include "jwt-cpp/jwt.h"
 #include <dotenv/dotenvFind.h>
 
@@ -14,26 +15,26 @@
 
 using namespace std;
 
-inline void register_farmRoutes(crow::App<JWTMiddleware> &app) {
+inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
    
    // Create new farm
    CROW_ROUTE(app, "/farm")
    .methods("POST"_method)
    ([](const crow::request &req) {
-      Database db;
       
       auto body = crow::json::load(req.body);
       if (!body) {
          crow::json::wvalue res; res["error"] = "Invalid JSON";
          return crow::response(400, res);
       }
-
+      
       string name = body["name"].s();
       int usersCount = body["usersCount"].i();
-
+      
+      // Database check
       Database db;
       if (!db.connect()) {
-         crow::json::wvalue res; res["error"] = "Database connection failed";
+         crow::json::wvalue res; res["error"] = "Unexpected error";
          return crow::response(500, res);
       }
 
@@ -54,12 +55,12 @@ inline void register_farmRoutes(crow::App<JWTMiddleware> &app) {
    });
 
    // Get farm from database by ID
-   CROW_ROUTE(app, "/farm")
+   CROW_ROUTE(app, "/farm/<int>")
    .methods("GET"_method)
-   ([](const crow::request &req) {
+   ([](const crow::request &req, int id) {
       Database db;
       if (!db.connect()) {
-         crow::json::wvalue res; res["error"] = "Database connection failed";
+         crow::json::wvalue res; res["error"] = "Unexpected error";
          return crow::response(500, res);
       }
 
@@ -91,7 +92,7 @@ inline void register_farmRoutes(crow::App<JWTMiddleware> &app) {
 
       Database db;
       if (!db.connect()) {
-         crow::json::wvalue res; res["error"] = "Database connection failed";
+         crow::json::wvalue res; res["error"] = "Unexpected error";
          return crow::response(500, res);
       }
 
@@ -122,7 +123,7 @@ inline void register_farmRoutes(crow::App<JWTMiddleware> &app) {
    ([&](int id) {
       Database db;
       if (!db.connect()) {
-         crow::json::wvalue res; res["error"] = "Database connection failed";
+         crow::json::wvalue res; res["error"] = "Unexpected error";
          return crow::response(500, res);
       }
 
