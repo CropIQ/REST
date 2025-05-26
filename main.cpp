@@ -20,7 +20,7 @@ int main()
     dotenvFind::init();
     
     app.get_middleware<crow::CORSHandler>().global()
-        .origin("http://localhost:3000")
+        .origin(std::getenv("FRONTEND_URL"))
         .methods("GET"_method, "POST"_method, "PUT"_method, "DELETE"_method, "OPTIONS"_method)
         .headers("Content-Type, Authorization")
         .allow_credentials();
