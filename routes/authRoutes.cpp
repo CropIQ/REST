@@ -1,6 +1,7 @@
 #pragma once
 
 #include <crow.h>
+#include <crow/middlewares/cors.h>
 
 #include <iostream>
 #include <string>
@@ -44,7 +45,7 @@ static string generateAccessToken(const string &userid, shared_ptr<sql::Connecti
     return accessToken;
 }
 
-inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
+inline void register_authRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
 
     CROW_ROUTE(app, "/login")
     .methods("POST"_method)
@@ -178,12 +179,12 @@ inline void register_authRoutes(crow::App<JWTMiddleware> &app) {
         if (errorsCount == 0) {
             //DB insert
             auto conn = db.getConn();
-            auto stmnt = conn->prepareStatement("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+            auto stmnt = conn->prepareStatement("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)", sql::Statement::RETURN_GENERATED_KEYS);
             stmnt->setString(1, name);
             stmnt->setString(2, email);
             stmnt->setString(3, hashedPassword);
             stmnt->setString(4, role);
-            stmnt->executeQuery();
+            stmnt->executeUpdate();
             
             auto generatedKeys = stmnt->getGeneratedKeys();
             if (generatedKeys->next()) {
