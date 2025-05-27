@@ -17,8 +17,37 @@ using namespace std;
 
 inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
 
+   // Get all farms
+   CROW_ROUTE(app, "/farms")
+   .methods("GET"_method)
+   ([&app](const crow::request &req) {
+      Database db;
+      if (!db.connect()) {
+         crow::json::wvalue res; res["error"] = "Unexpected error";
+         return crow::response(500, res);
+      }
+
+      auto conn = db.getConn();
+      auto stmnt = conn->prepareStatement("SELECT id, name FROM farms");
+      auto result = stmnt->executeQuery();
+
+      crow::json::wvalue farms;
+   std::vector<crow::json::wvalue> farmList;
+
+   while (result->next()) {
+      crow::json::wvalue farm;
+      farm["id"] = result->getInt("id");
+      farm["name"] = result->getString("name");
+      farmList.push_back(std::move(farm));
+   }
+
+   farms["farms"] = std::move(farmList);
+   return crow::response(200, farms);
+   });
+
+
    // Create new farm
-   CROW_ROUTE(app, "/farm")
+   CROW_ROUTE(app, "/farms")
    .methods("POST"_method)
    ([&app](const crow::request &req) {
       
@@ -55,7 +84,7 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
    });
 
    // Get farm from database by ID
-   CROW_ROUTE(app, "/farm/<int>")
+   CROW_ROUTE(app, "/farms/<int>")
    .methods("GET"_method)
    ([&app](const crow::request &req, int id) {
       Database db;
@@ -69,18 +98,18 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
       stmnt->setInt(1, id);
       auto result = stmnt->executeQuery();
 
-      crow::json::wvalue farms;
+      crow::json::wvalue farm;
       for(int i = 0; result->next(); ++i) {
-         farms[i]["id"] = result->getInt("id");
-         farms[i]["name"] = result->getString("name");
-         farms[i]["usersCount"] = result->getInt("usersCount");
+         farm[i]["id"] = result->getInt("id");
+         farm[i]["name"] = result->getString("name");
+         farm[i]["usersCount"] = result->getInt("usersCount");
       }
 
-      return crow::response(farms);
+      return crow::response(farm);
    });
 
    // Update farm name
-   CROW_ROUTE(app, "/farm/<int>")
+   CROW_ROUTE(app, "/farms/<int>")
    .methods("PUT"_method)
    ([&app](const crow::request& req, int id) {
       auto body = crow::json::load(req.body);
@@ -119,7 +148,7 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
       }
    });
 
-   CROW_ROUTE(app, "/farm/<int>")
+   CROW_ROUTE(app, "/farms/<int>")
    .methods("DELETE"_method)
    ([&app](int id) {
       Database db;
