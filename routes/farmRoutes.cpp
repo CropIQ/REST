@@ -16,11 +16,11 @@
 using namespace std;
 
 inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
-   
+
    // Create new farm
    CROW_ROUTE(app, "/farm")
    .methods("POST"_method)
-   ([](const crow::request &req) {
+   ([&app](const crow::request &req) {
       
       auto body = crow::json::load(req.body);
       if (!body) {
@@ -57,7 +57,7 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
    // Get farm from database by ID
    CROW_ROUTE(app, "/farm/<int>")
    .methods("GET"_method)
-   ([](const crow::request &req, int id) {
+   ([&app](const crow::request &req, int id) {
       Database db;
       if (!db.connect()) {
          crow::json::wvalue res; res["error"] = "Unexpected error";
@@ -65,8 +65,9 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
       }
 
       auto conn = db.getConn();
-      auto stmnt = conn->createStatement();
-      auto result = stmnt->executeQuery("SELECT id, name, usersCount FROM farms WHERE id = ?");
+      auto stmnt = conn->prepareStatement("SELECT id, name, usersCount FROM farms WHERE id = ?");
+      stmnt->setInt(1, id);
+      auto result = stmnt->executeQuery();
 
       crow::json::wvalue farms;
       for(int i = 0; result->next(); ++i) {
@@ -81,7 +82,7 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
    // Update farm name
    CROW_ROUTE(app, "/farm/<int>")
    .methods("PUT"_method)
-   ([&](const crow::request& req, int id) {
+   ([&app](const crow::request& req, int id) {
       auto body = crow::json::load(req.body);
       if(!body) {
          crow::json::wvalue res; res["error"] = "Invalid JSON";
@@ -120,7 +121,7 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
 
    CROW_ROUTE(app, "/farm/<int>")
    .methods("DELETE"_method)
-   ([&](int id) {
+   ([&app](int id) {
       Database db;
       if (!db.connect()) {
          crow::json::wvalue res; res["error"] = "Unexpected error";
