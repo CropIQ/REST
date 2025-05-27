@@ -30,7 +30,6 @@ int main()
     // Use std::getenv("DATABASE_HOST") to get the environment variable
 
     register_authRoutes(app);
-    register_farmRoutes(app);
     register_workerRoutes(app);
     register_farmRoutes(app);
 
