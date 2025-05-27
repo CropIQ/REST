@@ -186,15 +186,12 @@ inline void register_authRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
             stmnt->setString(4, role);
             stmnt->executeUpdate();
             
-            // SELECT LAST_INSERT_ID()
-            auto stmt = conn->createStatement();
-            auto result = stmt->executeQuery("SELECT LAST_INSERT_ID()");
-
-            if (!result->next()) {
-                errors.push_back("Failed to get user ID"); errorsCount++;
+            auto generatedKeys = stmnt->getGeneratedKeys();
+            if (generatedKeys->next()) {
+                userid = generatedKeys->getString(1);
             } else {
-                userid = result->getString(1).c_str();
-            }       
+                errors.push_back("Failed to get user ID"); errorsCount++;
+            }     
         }
 
         if (errorsCount == 0) {

@@ -11,6 +11,7 @@
 #include "include/Database.h"
 #include "include/middleware/JWTMiddleware.h"
 #include "routes/authRoutes.cpp"
+#include "routes/workerRoutes.cpp"
 
 using namespace std;
 
@@ -28,10 +29,11 @@ int main()
     // Use std::getenv("DATABASE_HOST") to get the environment variable
 
     register_authRoutes(app);
+    register_workerRoutes(app);
 
     //define your endpoint at the root directory
     CROW_ROUTE(app, "/")([](){
-        return "Hello world";
+        return "Hello";
     });
     
     CROW_ROUTE(app, "/simpleAuth")
@@ -69,28 +71,6 @@ int main()
 
         users["users"] = move(usersList);
         return crow::response{200, users};
-    });
-
-    CROW_ROUTE(app, "/authentication/sayHello/<string>")
-    .methods("GET"_method)
-    ([](string name){
-        //Return a JSON response with 200 status code
-        crow::json::wvalue x;
-        x["message"] = "Hello " + name;
-        x["name"] = name;
-        x["status"] = "success 200";
-        return crow::response{200, x};
-    });
-
-    CROW_ROUTE(app, "/authentication/sayHello/<string>")
-    .methods("POST"_method)
-    ([](string name){
-        //Return a JSON response with 201 status code
-        crow::json::wvalue x;
-        x["message"] = "Hello " + name;
-        x["name"] = name;
-        x["status"] = "success 201";
-        return crow::response{201, x};
     });
 
     app.port(18080).multithreaded().run();
