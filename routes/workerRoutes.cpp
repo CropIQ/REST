@@ -1,6 +1,7 @@
 #pragma once
 
 #include <crow.h>
+#include <crow/middlewares/cors.h>
 
 #include <iostream>
 #include <string>
@@ -14,7 +15,7 @@
 
 using namespace std;
 
-inline void register_workerRoutes(crow::App<JWTMiddleware> &app) {
+inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
 
     /**
      * @api {get} /worker/assignedTasks Get assigned tasks
