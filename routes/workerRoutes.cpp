@@ -15,7 +15,7 @@
 
 using namespace std;
 
-inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
+void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
 
     /**
      * @api {get} /worker/assignedTasks Get assigned tasks
@@ -150,7 +150,7 @@ inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &a
     .methods("POST"_method)
     ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
@@ -208,7 +208,7 @@ inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &a
     .methods("GET"_method)
     ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
@@ -246,7 +246,7 @@ inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &a
     .methods("GET"_method)
     ([&app](const crow::request &req, int farmId) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
@@ -285,7 +285,7 @@ inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &a
     .methods("POST"_method)
     ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
