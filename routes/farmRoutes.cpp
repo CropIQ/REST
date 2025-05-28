@@ -15,7 +15,7 @@
 
 using namespace std;
 
-inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
+void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
 
    // Get all farms
    CROW_ROUTE(app, "/farms")
@@ -46,7 +46,7 @@ inline void register_farmRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app
          farm["name"] = result->getString("name");
          farmList.push_back(std::move(farm));
       }
-
+      res["success"] = true;
       res["farms"] = std::move(farmList);
       return crow::response(200, res);
    });
