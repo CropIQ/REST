@@ -150,7 +150,7 @@ void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
     .methods("POST"_method)
     ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
@@ -208,7 +208,7 @@ void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
     .methods("GET"_method)
     ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
@@ -246,7 +246,7 @@ void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
     .methods("GET"_method)
     ([&app](const crow::request &req, int farmId) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
@@ -285,7 +285,7 @@ void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
     .methods("POST"_method)
     ([&app](const crow::request &req) {
         auto &ctx = app.get_context<JWTMiddleware>(req);
-        if (auto error = ctx.hasAnyRole({"worker-farmer"})) return std::move(*error);
+        if (auto error = ctx.hasAnyRole({"worker"})) return std::move(*error);
 
         crow::json::wvalue res;
         res["success"] = false;
