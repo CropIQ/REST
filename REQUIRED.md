@@ -8,7 +8,4 @@ PASSWORD_HASH_KEY="password_hash_key"
 
 # Database connection string
 DB_URL="jdbc:mariadb://host:port/database_name?user=username&password=password"
-
-# Frontend url
-FRONTEND_URL="http://localhost:3000"
 ```
