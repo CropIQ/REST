@@ -45,8 +45,7 @@ static string generateAccessToken(const string &userid, shared_ptr<sql::Connecti
     return accessToken;
 }
 
-inline void register_authRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
-
+void register_authRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
     CROW_ROUTE(app, "/login")
     .methods("POST"_method)
     ([](const crow::request &req) {

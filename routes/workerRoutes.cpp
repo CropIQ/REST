@@ -15,7 +15,7 @@
 
 using namespace std;
 
-inline void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
+void register_workerRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
 
     /**
      * @api {get} /worker/assignedTasks Get assigned tasks

@@ -10,8 +10,9 @@ include(cmake/LocalConfig.cmake OPTIONAL)
 find_package(Crow CONFIG REQUIRED)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
+file(GLOB_RECURSE SRC_ROUTE_FILES routes/*.cpp)
 
-add_executable(CropIQ main.cpp ${SRC_FILES})
+add_executable(CropIQ main.cpp ${SRC_FILES} ${SRC_ROUTE_FILES})
 
 target_include_directories(CropIQ 
   PUBLIC 
