@@ -10,8 +10,7 @@
 #include "include/Encryption.h"
 #include "include/Database.h"
 #include "include/middleware/JWTMiddleware.h"
-#include "routes/authRoutes.cpp"
-#include "routes/workerRoutes.cpp"
+#include "include/Routes.h"
 
 using namespace std;
 
@@ -31,11 +30,8 @@ int main()
     register_authRoutes(app);
     register_workerRoutes(app);
 
-    //define your endpoint at the root directory
-    CROW_ROUTE(app, "/")([](){
-        return "Hello";
-    });
-    
+    /*
+    ---------- SAMPLE AUTHENTICATION ROUTE ----------
     CROW_ROUTE(app, "/simpleAuth")
     .methods("GET"_method)
     ([&app](const crow::request& req){
@@ -51,7 +47,10 @@ int main()
 
         return crow::response{200, x};
     });
+    */
     
+    /*
+    ---------- SAMPLE DATABASE ROUTE ----------
     CROW_ROUTE(app, "/sampleDB")([](){
         Database db;
         if (!db.connect()) return crow::response(500, "Unexpected error");
@@ -72,6 +71,7 @@ int main()
         users["users"] = move(usersList);
         return crow::response{200, users};
     });
+    */
 
     app.port(18080).multithreaded().run();
 }
