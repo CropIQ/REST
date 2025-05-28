@@ -28,6 +28,7 @@ int main()
 
     register_authRoutes(app);
     register_workerRoutes(app);
+    register_farmRoutes(app);
 
     /*
     ---------- SAMPLE AUTHENTICATION ROUTE ----------
