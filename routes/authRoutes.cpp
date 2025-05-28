@@ -235,7 +235,7 @@ void register_authRoutes(crow::App<crow::CORSHandler, JWTMiddleware> &app) {
             auto decoded = jwt::decode(refreshToken);
             auto verifier = jwt::verify()
                 .allow_algorithm(jwt::algorithm::hs256{std::getenv("JWT_SECRET_KEY")})
-                .with_issuer("CropIQ");
+                .with_issuer("CropIQ-RT");
 
             verifier.verify(decoded);
 
